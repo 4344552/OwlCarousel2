@@ -157,6 +157,18 @@
 		var override,
 			settings = this._core.settings;
 
+		var isDoubleClicked = function(element) {
+			//if already clicked return TRUE to indicate this click is not allowed
+			if (element.data("isclicked")) return true;
+			//mark as clicked for 1 second
+			element.data("isclicked", true);
+			setTimeout(function () {
+				element.removeData("isclicked");
+			}, 300);
+			//return FALSE to indicate this click was allowed
+			return false;
+		};
+		
 		// create DOM structure for relative navigation
 		this._controls.$relative = (settings.navContainer ? $(settings.navContainer)
 			: $('<div>').addClass(settings.navContainerClass).appendTo(this.$element)).addClass('disabled');
@@ -166,6 +178,9 @@
 			.html(settings.navText[0])
 			.prependTo(this._controls.$relative)
 			.on('click', $.proxy(function(e) {
+				if (isDoubleClicked($(this))) {
+					return;
+				}			
 				this.prev(settings.navSpeed);
 			}, this));
 		this._controls.$next = $('<' + settings.navElement + '>')
@@ -173,6 +188,9 @@
 			.html(settings.navText[1])
 			.appendTo(this._controls.$relative)
 			.on('click', $.proxy(function(e) {
+				if (isDoubleClicked($(this))) {
+					return;
+				}
 				this.next(settings.navSpeed);
 			}, this));
 
